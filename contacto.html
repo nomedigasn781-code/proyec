@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Contacto - Eddi Sociedad Anónima</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>    /* ==== ESTILOS GENERALES ==== */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        /* ==== MENÚ (NAVBAR) ==== */
+        .navbar {
+            background-color: #333;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar ul li {
+            display: inline;
+            margin: 0 20px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .navbar ul li a:hover {
+            color: #fff;
+        }
+    
+
+        /* ==== CONTENEDOR PRINCIPAL ==== */
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #0d0d0e;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+
+        /* ==== INFORMACIÓN DE CONTACTO ==== */
+        .contact-info p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .contact-info strong {
+            color: #333;
+        }
+
+        /* ==== FORMULARIO ==== */
+        form {
+            margin-top: 20px;
+        }
+
+        form input,
+        form textarea,
+        form select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        form textarea {
+            resize: vertical;
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 14px;
+        }
+
+        form button {
+            background: #333;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        form button:hover {
+            background: #333;
+        }
+
+        /* ==== MAPA ==== */
+        iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        /* ==== REDES SOCIALES ==== */
+        .social-icons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .social-icons a {
+            margin: 0 12px;
+            font-size: 28px;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .social-icons a:hover {
+            transform: scale(1.2);
+        }
+
+        /* ==== MENSAJE DE CONFIANZA ==== */
+        .trust-message {
+            background: #e7f3ff;
+            padding: 15px;
+            border-left: 5px solid #333;
+            font-style: italic;
+            color: #444;
+            border-radius: 5px;
+        }
+
+        /* ==== RESPONSIVE ==== */
+        @media (max-width: 600px) {
+            .navbar ul li {
+                display: block;
+                margin: 10px 0;
+            }
+            .container {
+                margin: 15px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <div class="navbar">
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="ingresar.html">Ingresar</a></li>
+            <li><a href="servicios.html">Servicios</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container">
+        <h2>Información básica de contacto</h2>
+        <div class="contact-info">
+            <p><strong>Nombre:</strong> Eddi Sociedad Anónima</p>
+            <p><strong>Teléfono:</strong> +595 981 123456 (WhatsApp)</p>
+            <p><strong>Correo:</strong> SiempreContigo@HOY.com</p>
+            <p><strong>Dirección:</strong> Calle Falsa 123, Pilar, Paraguay</p>
+            <p><strong>Horario:</strong> Lunes a Viernes, 08:00 - 18:00</p>
+        </div>
+
+        <h2>Formulario de contacto</h2>
+<form action="https://formspree.io/f/mgvpjypl" method="POST">
+    <input type="text" name="nombre" placeholder="Tu nombre" required>
+    <input type="email" name="email" placeholder="Tu correo electrónico" required>
+    <input type="text" name="asunto" placeholder="Motivo" required>
+    <textarea name="mensaje" placeholder="Mensaje" required></textarea>
+
+ <label class="label-uniform">
+  <input type="checkbox" name="terminos" required>
+  <a href="#">Acepto la política de privacidad</a>
+</label>
+
+    <label>¿Cuánto es 3 + 4?
+        <input type="text" name="captcha" required style="width: 80px; display: inline-block;">
+    </label>
+
+    <button type="submit">Enviar mensaje</button>
+</form>
+
+        </form>
+
+        <h2>Mapa de ubicación</h2>
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.123456789!2d-57.123456!3d-25.123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x945d123456789abc%3A0x123456789abcdef!2sPilar!5e0!3m2!1ses!2spy!4v0000000000000" 
+            allowfullscreen="" loading="lazy">
+        </iframe>
+
+    <h2>📱 Redes sociales</h2>
+    <div class="social-icons">
+      <a href="https://facebook.com/tuperfil" target="_blank">📘</a>
+      <a href="https://instagram.com/tuperfil" target="_blank">📸</a>
+      <a href="https://tiktok.com/@tuperfil" target="_blank">🎵</a>
+      <a href="https://linkedin.com/in/tuperfil" target="_blank">💼</a>
+      <a href="https://youtube.com/tuperfil" target="_blank">📺</a>
+    </div>
+
+    <h2>🛡️ Mensaje de confianza</h2>
+    <div class="trust-message">
+      <p>“Tu voz cuenta, y tu consulta también. Nos esforzamos por responderte en menos de 24 horas, con información clara, atención personalizada y el compromiso de estar siempre cerca de ti.”</p>
+    </div>
+  </div>
+</body>
+</html>
