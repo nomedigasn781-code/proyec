@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eddi Sociedad Anonima</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos adicionales para el carrito y modal */
+        #carrito {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            min-width: 450px;
+            z-index: 1000;
+        }
+
+        .submenu:hover #carrito {
+            display: block;
+        }
+
+        #lista-carrito {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        #lista-carrito th {
+            background-color: #333;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #lista-carrito td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+        }
+
+        #lista-carrito img {
+            border-radius: 4px;
+        }
+
+        .quitar {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #total-gastado {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 15px 0;
+        }
+
+        #vaciar-carrito, #confirmar-compra {
+            display: inline-block;
+            padding: 10px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        #vaciar-carrito {
+            background-color: #e74c3c;
+        }
+
+        #vaciar-carrito:hover {
+            background-color: #c0392b;
+        }
+
+        #confirmar-compra {
+            background-color: #27ae60;
+        }
+
+        #confirmar-compra:hover {
+            background-color: #229954;
+        }
+
+        .botones-carrito {
+            margin-top: 15px;
+        }
+
+        /* Modal de confirmación */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #27ae60;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            color: #27ae60;
+            margin: 0;
+        }
+
+        .close-modal {
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            font-weight: bold;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .producto-confirmacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .producto-confirmacion:last-child {
+            border-bottom: none;
+        }
+
+        .producto-nombre {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .producto-precio {
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .total-confirmacion {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 3px solid #27ae60;
+        }
+
+        .botones-modal {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-finalizar {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-finalizar:hover {
+            background-color: #229954;
+        }
+
+        .btn-cancelar {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #c0392b;
+        }
+
+        .carrito-vacio {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+
+        /* Estilos para usuario logueado */
+        .usuario-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .usuario-info:hover {
+            background: #e0e0e0;
+        }
+
+        .usuario-info span {
+            font-weight: 600;
+            color: #333;
+        }
+
+        #btn-cerrar-sesion {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        #btn-cerrar-sesion:hover {
+            background-color: #c0392b;
+        }
+
+        body > #total-gastado {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+
+        .datos-cliente {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .datos-cliente h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li id="nav-ingresar"><a href="ingresar.html">Ingresar</a></li>
+            <li id="nav-usuario-info" style="display: none;">
+                <a href="perfil.html" style="text-decoration: none;">
+                    <div class="usuario-info">
+                        <span>👤</span>
+                        <span id="nombre-usuario"></span>
+                    </div>
+                </a>
+            </li>
+            <li id="nav-cerrar-sesion" style="display: none;">
+                <button id="btn-cerrar-sesion">🚪 Cerrar Sesión</button>
+            </li>
+            <li><a href="servicios.html">Servicio</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+            <li class="submenu">
+                <img id="img-carrito" src="images/car.svg" alt="Carrito de compras">
+                <div id="carrito">
+                    <table id="lista-carrito">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <p id="total-gastado">Total: $0</p>
+                    <div class="botones-carrito">
+                        <a href="#" id="vaciar-carrito">Vaciar Carrito</a>
+                        <button id="confirmar-compra">Confirmar Compra</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <header>
+        <div class="header-content container">
+            <div class="header-txt">
+                <span>Bienvenido a la tienda 24hs antes</span>
+                <h1>Eddi Sociedad Anonima</h1>
+                <p>
+                    ¡Descubre la experiencia de comprar desde casa con nuestra tienda online! 🛒 Ofrecemos productos de alta calidad, precios competitivos y envíos rápidos a todo el país. Navega fácilmente por nuestras categorías, encuentra lo que necesitas y paga de forma segura. ¡No esperes más para disfrutar de tus compras con comodidad y confianza!
+                </p>
+                <div class="butons">
+                    <a href="info.html" class="btn-1">Información</a>
+                    <a href="about.html" class="btn-1">Leer más</a>
+                </div>
+            </div>
+            <div class="header-img">
+                <img src="images/bag.png" alt="Bolso" class="bag-img">
+            </div>
+        </div>
+    </header>
+
+    <main class="products container" id="lista-1">
+        <h2>Productos</h2>
+        <div class="product-container">
+            <div class="box">
+                <img src="images/pr1.png" alt="Jamonada">
+                <div class="product-txt">
+                    <h3>Jamonada</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$120.000</p>
+                    <a href="#" class="agregar-carrito" data-id="1">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr2.png" alt="Chorizo Napolitano">
+                <div class="product-txt">
+                    <h3>Chorizo Napolitano</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$25.000</p>
+                    <a href="#" class="agregar-carrito" data-id="2">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr3.png" alt="Chorizo de Viena con Queso">
+                <div class="product-txt">
+                    <h3>Chorizo de Viena con Queso</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$23.000</p>
+                    <a href="#" class="agregar-carrito" data-id="3">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr4.png" alt="Pancho con Queso">
+                <div class="product-txt">
+                    <h3>Pancho con Queso</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$20.000</p>
+                    <a href="#" class="agregar-carrito" data-id="4">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr5.png" alt="Combo Parrillero">
+                <div class="product-txt">
+                    <h3>Combo Parrillero</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$24.000</p>
+                    <a href="#" class="agregar-carrito" data-id="5">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr6.png" alt="Jamonada">
+                <div class="product-txt">
+                    <h3>Jamonada</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$10.000</p>
+                    <a href="#" class="agregar-carrito" data-id="6">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr7.png" alt="Matambrito">
+                <div class="product-txt">
+                    <h3>Matambrito</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$50.000</p>
+                    <a href="#" class="agregar-carrito" data-id="7">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr8.png" alt="Morzilla">
+                <div class="product-txt">
+                    <h3>Morzilla</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$12.000</p>
+                    <a href="#" class="agregar-carrito" data-id="8">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr9.png" alt="Pan de Ajo">
+                <div class="product-txt">
+                    <h3>Pan de Ajo</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$24.000</p>
+                    <a href="#" class="agregar-carrito" data-id="9">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr10.png" alt="Queso Cheader">
+                <div class="product-txt">
+                    <h3>Queso Cheader</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$18.500</p>
+                    <a href="#" class="agregar-carrito" data-id="10">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr11.png" alt="QUESO GOUDA 3 KG.">
+                <div class="product-txt">
+                    <h3>QUESO GOUDA 3 KG.</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$75.300</p>
+                    <a href="#" class="agregar-carrito" data-id="11">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr12.png" alt="QUESO MOZZARELLA 3 KG.">
+                <div class="product-txt">
+                    <h3>QUESO MOZZARELLA 3 KG.</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$55.950</p>
+                    <a href="#" class="agregar-carrito" data-id="12">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr13.png" alt="REQUESÓN CREMOSO X 250 GR.">
+                <div class="product-txt">
+                    <h3>REQUESÓN CREMOSO X 250 GR.</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$28.000</p>
+                    <a href="#" class="agregar-carrito" data-id="13">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr14.png" alt="QUESO PARRILLERO X 300 GRS. APROX.">
+                <div class="product-txt">
+                    <h3>QUESO PARRILLERO X 300 GRS. APROX</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$49.900</p>
+                    <a href="#" class="agregar-carrito" data-id="14">Agregar al carrito</a>
+                </div>
+            </div>
+            <div class="box">
+                <img src="images/pr15.png" alt="REQUESÓN CREMOSO ORIGINAL X 250 GR.">
+                <div class="product-txt">
+                    <h3>REQUESÓN CREMOSO ORIGINAL X 250 GR.</h3>
+                    <p>Mejor Calidad</p>
+                    <p class="precio">$28.000</p>
+                    <a href="#" class="agregar-carrito" data-id="15">Agregar al carrito</a>
+                </div>
+            </div>
+        </div>
+        <div class="btn-2" id="load-more">Cargar Más</div>
+    </main>
+
+    <section class="testimonial-container container">
+        <span>Testimonios</span>
+        <h2>Qué opinan nuestros Clientes</h2>
+        <div class="testimonial-content">
+            <div class="testimonial">
+                <p>
+                    "Esta página transmite confianza desde el primer clic. La información está presentada con total transparencia, sin letra chica ni confusiones. Me sentí seguro al interactuar y realizar gestiones, sabiendo que todo está respaldado por un servicio serio y eficiente. Volveré sin dudar."
+                </p>
+                <img src="images/starts.png" alt="Calificación de 5 estrellas">
+                <h4>Lorem ipsum</h4>
+            </div>
+            <div class="testimonial">
+                <p>
+                    "Lo que más me sorprendió fue la rapidez y calidad de la atención al cliente. En menos de 24 horas recibí una respuesta clara y útil, algo que no se ve todos los días. Se nota que detrás de esta página hay un equipo comprometido con brindar soluciones reales. Muy recomendable."
+                </p>
+                <img src="images/starts.png" alt="Calificación de 5 estrellas">
+                <h4>Lorem ipsum</h4>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de confirmación -->
+    <div id="modal-confirmacion" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirmar Compra</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            
+            <!-- Formulario de datos del cliente -->
+            <div class="datos-cliente">
+                <h3>📋 Datos de Entrega</h3>
+                <div class="form-group">
+                    <label for="nombre-cliente">Nombre Completo *</label>
+                    <input type="text" id="nombre-cliente" required placeholder="Ej: Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label for="telefono-cliente">Teléfono *</label>
+                    <input type="tel" id="telefono-cliente" required placeholder="Ej: 0981234567">
+                </div>
+                <div class="form-group">
+                    <label for="direccion-cliente">Dirección de Entrega *</label>
+                    <input type="text" id="direccion-cliente" required placeholder="Ej: Av. España 123">
+                </div>
+                <div class="form-group">
+                    <label for="referencia-cliente">Referencia (Opcional)</label>
+                    <textarea id="referencia-cliente" rows="2" placeholder="Ej: Casa azul, al lado del supermercado"></textarea>
+                </div>
+            </div>
+            
+            <div id="lista-confirmacion"></div>
+            <div class="total-confirmacion" id="total-confirmacion"></div>
+            <div class="botones-modal">
+                <button class="btn-modal btn-cancelar">Cancelar</button>
+                <button class="btn-modal btn-finalizar">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // SISTEMA DE BASE DE DATOS
+        // ============================================
+        class DatabasePedidos {
+            constructor() {
+                this.pedidosKey = 'pedidos';
+            }
+
+            guardarPedido(pedido) {
+                try {
+                    const pedidos = this.obtenerTodosPedidos();
+                    pedido.id = this.generarIdUnico();
+                    pedido.fechaCreacion = new Date().toISOString();
+                    pedido.estado = pedido.estado || 'pendiente';
+                    pedidos.push(pedido);
+                    localStorage.setItem(this.pedidosKey, JSON.stringify(pedidos));
+                    console.log('✅ Pedido guardado en DB:', pedido.id);
+                    return { success: true, pedido: pedido };
+                } catch (error) {
+                    console.error('❌ Error al guardar pedido:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            obtenerTodosPedidos() {
+                try {
+                    const pedidos = localStorage.getItem(this.pedidosKey);
+                    return pedidos ? JSON.parse(pedidos) : [];
+                } catch (error) {
+                    console.error('❌ Error al obtener pedidos:', error);
+                    return [];
+                }
+            }
+
+            generarIdUnico() {
+                return 'PED-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            }
+
+            obtenerEstadisticas() {
+                const pedidos = this.obtenerTodosPedidos();
+                return {
+                    totalPedidos: pedidos.length,
+                    pendientes: pedidos.filter(p => p.estado === 'pendiente').length,
+                    totalVentas: pedidos.reduce((sum, p) => sum + (p.total || 0), 0)
+                };
+            }
+        }
+
+        // Inicializar base de datos
+        const db = new DatabasePedidos();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarSesion();
+
+            const carrito = document.querySelector('#lista-carrito tbody');
+            const vaciarCarritoBtn = document.querySelector('#vaciar-carrito');
+            const confirmarCompraBtn = document.querySelector('#confirmar-compra');
+            const totalGastado = document.querySelector('#total-gastado');
+            const modal = document.querySelector('#modal-confirmacion');
+            const closeModal = document.querySelector('.close-modal');
+            const btnCancelar = document.querySelector('.btn-cancelar');
+            const btnFinalizar = document.querySelector('.btn-finalizar');
+            const btnCerrarSesion = document.querySelector('#btn-cerrar-sesion');
+            
+            let carritoGuardado = JSON.parse(localStorage.getItem('carrito')) || [];
+
+            function verificarSesion() {
+                const usuarioLogueado = localStorage.getItem('usuarioLogueado');
+                const token = localStorage.getItem('token');
+                
+                if (usuarioLogueado && token) {
+                    const usuario = JSON.parse(usuarioLogueado);
+                    mostrarUsuarioLogueado(usuario);
+                } else {
+                    mostrarBotonIngresar();
+                }
+            }
+
+            function mostrarUsuarioLogueado(usuario) {
+                document.getElementById('nav-ingresar').style.display = 'none';
+                document.getElementById('nav-usuario-info').style.display = 'block';
+                document.getElementById('nav-cerrar-sesion').style.display = 'block';
+                document.getElementById('nombre-usuario').textContent = usuario.nombre;
+            }
+
+            function mostrarBotonIngresar() {
+                document.getElementById('nav-ingresar').style.display = 'block';
+                document.getElementById('nav-usuario-info').style.display = 'none';
+                document.getElementById('nav-cerrar-sesion').style.display = 'none';
+            }
+
+            if (btnCerrarSesion) {
+                btnCerrarSesion.addEventListener('click', () => {
+                    if (confirm('¿Estás seguro de cerrar sesión? Se vaciará tu carrito.')) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('usuarioLogueado');
+                        localStorage.removeItem('usuario');
+                        localStorage.removeItem('carrito');
+                        carritoGuardado = [];
+                        actualizarCarrito();
+                        mostrarBotonIngresar();
+                        alert('✅ Sesión cerrada correctamente');
+                        window.location.reload();
+                    }
+                });
+            }
+
+            function actualizarCarrito() {
+                carrito.innerHTML = '';
+                let total = 0;
+
+                carritoGuardado.forEach((item, index) => {
+                    const precioTexto = item.price.replace('$', '').replace(/\./g, '').replace(',', '.');
+                    const precio = parseFloat(precioTexto);
+                    total += precio;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${item.imgSrc}" alt="${item.name}" width="50"></td>
+                        <td>${item.name}</td>
+                        <td>$${precio.toLocaleString()}</td>
+                        <td><button class="quitar" data-index="${index}">❌</button></td>
+                    `;
+                    carrito.appendChild(row);
+                });
+
+                totalGastado.textContent = `Total: $${total.toLocaleString()}`;
+                localStorage.setItem('carrito', JSON.stringify(carritoGuardado));
+            }
+
+            function mostrarModalConfirmacion() {
+                const usuarioLogueado = localStorage.getItem('usuarioLogueado');
+                if (!usuarioLogueado) {
+                    alert('⚠️ Debes iniciar sesión para realizar una compra');
+                    window.location.href = 'ingresar.html';
+                    return;
+                }
+
+                if (carritoGuardado.length === 0) {
+                    alert('El carrito está vacío 😕');
+                    return;
+                }
+
+                const listaConfirmacion = document.querySelector('#lista-confirmacion');
+                const totalConfirmacion = document.querySelector('#total-confirmacion');
+                
+                listaConfirmacion.innerHTML = '<h3 style="margin: 20px 0 10px 0; font-weight: 600;">🛒 Productos:</h3>';
+                let total = 0;
+
+                carritoGuardado.forEach(item => {
+                    const precioTexto = item.price.replace('$', '').replace(/\./g, '').replace(',', '.');
+                    const precio = parseFloat(precioTexto);
+                    total += precio;
+
+                    const div = document.createElement('div');
+                    div.className = 'producto-confirmacion';
+                    div.innerHTML = `
+                        <div class="producto-nombre">${item.name}</div>
+                        <div class="producto-precio">${item.price}</div>
+                    `;
+                    listaConfirmacion.appendChild(div);
+                });
+
+                totalConfirmacion.textContent = `TOTAL: $${total.toLocaleString()}`;
+                modal.style.display = 'flex';
+            }
+
+            function cerrarModal() {
+                modal.style.display = 'none';
+            }
+
+            function finalizarCompra() {
+                const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado'));
+                
+                if (!usuarioLogueado) {
+                    alert('⚠️ Debes iniciar sesión para realizar una compra');
+                    window.location.href = 'ingresar.html';
+                    return;
+                }
+
+                const nombre = document.getElementById('nombre-cliente').value.trim();
+                const telefono = document.getElementById('telefono-cliente').value.trim();
+                const direccion = document.getElementById('direccion-cliente').value.trim();
+                const referencia = document.getElementById('referencia-cliente').value.trim();
+
+                if (!nombre || !telefono || !direccion) {
+                    alert('⚠️ Por favor completa todos los campos obligatorios (*)');
+                    return;
+                }
+
+                let total = 0;
+                carritoGuardado.forEach(item => {
+                    const precioTexto = item.price.replace('$', '').replace(/\./g, '').replace(',', '.');
+                    const precio = parseFloat(precioTexto);
+                    total += precio;
+                });
+
+                const pedido = {
+                    usuarioId: usuarioLogueado.id,
+                    usuarioEmail: usuarioLogueado.email,
+                    usuarioNombre: usuarioLogueado.nombre,
+                    cliente: {
+                        nombre: nombre,
+                        telefono: telefono,
+                        direccion: direccion,
+                        referencia: referencia
+                    },
+                    productos: [...carritoGuardado],
+                    total: total,
+                    estado: 'pendiente'
+                };
+
+                // ⭐ GUARDAR EN LA BASE DE DATOS ⭐
+                const resultado = db.guardarPedido(pedido);
+                
+                if (!resultado.success) {
+                    alert('❌ Error al guardar el pedido: ' + resultado.error);
+                    return;
+                }
+
+                console.log('✅ Pedido guardado exitosamente:', resultado.pedido.id);
+
+                // Preparar mensaje de WhatsApp
+                let listadoProductos = `🛍️ *NUEVO PEDIDO #${resultado.pedido.id}*\n\n`;
+                
+                listadoProductos += '👤 *USUARIO REGISTRADO*\n';
+                listadoProductos += `Nombre: ${usuarioLogueado.nombre}\n`;
+                listadoProductos += `Email: ${usuarioLogueado.email}\n`;
+                if (usuarioLogueado.telefono) {
+                    listadoProductos += `Teléfono: ${usuarioLogueado.telefono}\n`;
+                }
+                listadoProductos += '\n━━━━━━━━━━━━━━━━━━\n\n';
+                
+                listadoProductos += '📦 *DATOS DE ENTREGA*\n';
+                listadoProductos += `Nombre: ${nombre}\n`;
+                listadoProductos += `Teléfono: ${telefono}\n`;
+                listadoProductos += `Dirección: ${direccion}\n`;
+                if (referencia) {
+                    listadoProductos += `Referencia: ${referencia}\n`;
+                }
+                listadoProductos += '\n━━━━━━━━━━━━━━━━━━\n\n';
+
+                listadoProductos += '🛒 *PRODUCTOS*\n\n';
+                carritoGuardado.forEach((item, index) => {
+                    listadoProductos += `${index + 1}. *${item.name}*\n   ${item.price}\n\n`;
+                });
+
+                listadoProductos += '━━━━━━━━━━━━━━━━━━\n';
+                listadoProductos += `💰 *TOTAL: ${total.toLocaleString()}*\n`;
+                listadoProductos += '━━━━━━━━━━━━━━━━━━\n\n';
+                listadoProductos += `📋 ID Pedido: ${resultado.pedido.id}\n`;
+                listadoProductos += '✅ ¡Gracias por tu pedido!';
+
+                // CAMBIA ESTE NÚMERO por tu número de WhatsApp
+                const numeroWhatsApp = '+595962340556';
+                const mensajeCodificado = encodeURIComponent(listadoProductos);
+                const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
+                
+                // Abrir WhatsApp
+                window.open(urlWhatsApp, '_blank');
+                
+                // Limpiar formulario
+                document.getElementById('nombre-cliente').value = '';
+                document.getElementById('telefono-cliente').value = '';
+                document.getElementById('direccion-cliente').value = '';
+                document.getElementById('referencia-cliente').value = '';
+                
+                // Vaciar carrito
+                carritoGuardado = [];
+                actualizarCarrito();
+                localStorage.removeItem('carrito');
+                cerrarModal();
+                
+                // Mostrar confirmación
+                alert(`✅ Pedido guardado en la base de datos\n\nID: ${resultado.pedido.id}\n\nTotal de pedidos: ${db.obtenerEstadisticas().totalPedidos}\n\nSe abrirá WhatsApp para confirmar.`);
+            }
+
+            // === AGREGAR PRODUCTO AL CARRITO ===
+            document.querySelectorAll('.agregar-carrito').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    const usuarioLogueado = localStorage.getItem('usuarioLogueado');
+                    if (!usuarioLogueado) {
+                        alert('⚠️ Debes iniciar sesión para agregar productos al carrito');
+                        window.location.href = 'ingresar.html';
+                        return;
+                    }
+                    
+                    const product = button.closest('.box');
+                    const id = button.getAttribute('data-id');
+                    const name = product.querySelector('h3').textContent;
+                    const price = product.querySelector('.precio').textContent;
+                    const imgSrc = product.querySelector('img').src;
+                    carritoGuardado.push({ id, name, price, imgSrc });
+                    actualizarCarrito();
+                    
+                    button.textContent = '✓ Agregado';
+                    button.style.backgroundColor = '#27ae60';
+                    setTimeout(() => {
+                        button.textContent = 'Agregar al carrito';
+                        button.style.backgroundColor = '';
+                    }, 1000);
+                });
+            });
+
+            // === QUITAR PRODUCTO DEL CARRITO ===
+            carrito.addEventListener('click', (e) => {
+                if (e.target.classList.contains('quitar')) {
+                    const index = e.target.getAttribute('data-index');
+                    carritoGuardado.splice(index, 1);
+                    actualizarCarrito();
+                }
+            });
+
+            // === VACIAR CARRITO ===
+            vaciarCarritoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (carritoGuardado.length === 0) {
+                    alert('El carrito ya está vacío');
+                    return;
+                }
+                if (confirm('¿Estás seguro de vaciar el carrito?')) {
+                    carritoGuardado = [];
+                    actualizarCarrito();
+                    localStorage.removeItem('carrito');
+                }
+            });
+
+            // === CONFIRMAR COMPRA ===
+            confirmarCompraBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                mostrarModalConfirmacion();
+            });
+
+            // === CERRAR MODAL ===
+            closeModal.addEventListener('click', cerrarModal);
+            btnCancelar.addEventListener('click', cerrarModal);
+
+            // === FINALIZAR COMPRA ===
+            btnFinalizar.addEventListener('click', finalizarCompra);
+
+            // === CERRAR MODAL AL HACER CLIC FUERA ===
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    cerrarModal();
+                }
+            });
+
+            // === CARGAR MÁS PRODUCTOS ===
+            const products = document.querySelectorAll('.product-container .box');
+            const loadMoreBtn = document.querySelector('#load-more');
+            
+            products.forEach((product, index) => {
+                if (index >= 12) {
+                    product.classList.add('hidden');
+                }
+            });
+
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    products.forEach((product) => {
+                        product.classList.remove('hidden');
+                    });
+                    loadMoreBtn.style.display = 'none';
+                });
+            }
+
+            // === INICIALIZAR CARRITO AL CARGAR ===
+            actualizarCarrito();
+
+            // === MOSTRAR ESTADÍSTICAS EN CONSOLA ===
+            console.log('📊 Estadísticas de la Base de Datos:', db.obtenerEstadisticas());
+        });
+
+        // Funciones globales para debugging en consola
+        window.dbPedidos = db;
+        window.verTodosPedidos = function() {
+            const pedidos = db.obtenerTodosPedidos();
+            console.table(pedidos);
+            return pedidos;
+        };
+    </script>
+</body>
+</html>
